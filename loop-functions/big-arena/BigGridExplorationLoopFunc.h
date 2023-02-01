@@ -1,18 +1,18 @@
-#ifndef GRID_EXPLORATION_LOOP_FUNC
-#define GRID_EXPLORATION_LOOP_FUNC
+#ifndef BIG_GRID_EXPLORATION_LOOP_FUNC
+#define BIG_GRID_EXPLORATION_LOOP_FUNC
 
-#include "../../../src/RVRCoreLoopFunctions.h"
+#include "../../src/RVRCoreLoopFunctions.h"
 #include <argos3/core/simulator/space/space.h>
 #include <argos3/plugins/robots/rvr/simulator/rvr_entity.h>
 
 using namespace argos;
 
-class GridExplorationLoopFunction : public RVRCoreLoopFunctions
+class BigGridExplorationLoopFunction : public RVRCoreLoopFunctions
 {
 public:
-  GridExplorationLoopFunction();
-  GridExplorationLoopFunction(const GridExplorationLoopFunction &orig);
-  virtual ~GridExplorationLoopFunction();
+  BigGridExplorationLoopFunction();
+  BigGridExplorationLoopFunction(const BigGridExplorationLoopFunction &orig);
+  virtual ~BigGridExplorationLoopFunction();
 
   virtual void Destroy();
 
@@ -31,6 +31,15 @@ private:
   Real m_arenaSize;
   UInt32 m_gridSize;
   Real m_fObjectiveFunction;
+     /**
+      * The path of the output file.
+      */
+      std::string m_strOutFile;
+
+     /**
+      * The stream associated to the output file.
+      */
+      std::ofstream m_cOutFile;
 };
 
 #endif

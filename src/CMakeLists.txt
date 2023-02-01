@@ -5,26 +5,26 @@ if(ARGOS_BUILD_FOR_SIMULATOR)
 
 	# Headers
 	set(LOOP_HEADERS
-		CoreLoopFunctions.h
+		RVRCoreLoopFunctions.h
 	)
 
 	# Sources
 	set(LOOP_SOURCES
-		CoreLoopFunctions.cpp
+		RVRCoreLoopFunctions.cpp
 	)
 else()
 endif(ARGOS_BUILD_FOR_SIMULATOR)
 
 
-add_library(argos3_demiurge_loop_functions SHARED ${LOOP_HEADERS} ${LOOP_SOURCES} )
-target_link_libraries(argos3_demiurge_loop_functions argos3plugin_${ARGOS_BUILD_FOR}_rvr)
+add_library(argos3_demiurge_rvr_loop_functions SHARED ${LOOP_HEADERS} ${LOOP_SOURCES} )
+target_link_libraries(argos3_demiurge_rvr_loop_functions argos3plugin_${ARGOS_BUILD_FOR}_rvr)
 
 install(
   FILES ${LOOP_HEADERS}
   DESTINATION include/argos3/demiurge/loop-functions)
 
 # Install location for the e-puck plugin
-install(TARGETS argos3_demiurge_loop_functions
+install(TARGETS argos3_demiurge_rvr_loop_functions
   RUNTIME DESTINATION bin
   LIBRARY DESTINATION lib/argos3
   ARCHIVE DESTINATION lib/argos3)

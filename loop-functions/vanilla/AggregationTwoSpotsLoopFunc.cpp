@@ -31,7 +31,7 @@ AggregationTwoSpotsLoopFunction::AggregationTwoSpotsLoopFunction(const Aggregati
 
 void AggregationTwoSpotsLoopFunction::Init(TConfigurationNode &t_tree)
 {
-  CoreLoopFunctions::Init(t_tree);
+  RVRCoreLoopFunctions::Init(t_tree);
 }
 
 /****************************************/
@@ -73,7 +73,7 @@ void AggregationTwoSpotsLoopFunction::Reset()
   m_fObjectiveFunction = 0;
   m_unScoreSpot1 = 0;
   m_unScoreSpot2 = 0;
-  CoreLoopFunctions::Reset();
+  RVRCoreLoopFunctions::Reset();
 }
 
 /****************************************/

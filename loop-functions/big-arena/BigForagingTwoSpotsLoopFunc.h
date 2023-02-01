@@ -8,8 +8,8 @@
   * @license MIT License
   */
 
-#ifndef FORAGING_TWO_SPOTS_LOOP_FUNC
-#define FORAGING_TWO_SPOTS_LOOP_FUNC
+#ifndef BIG_FORAGING_TWO_SPOTS_LOOP_FUNC
+#define BIG_FORAGING_TWO_SPOTS_LOOP_FUNC
 
 #include <map>
 
@@ -20,11 +20,11 @@
 
 using namespace argos;
 
-class ForagingTwoSpotsLoopFunction: public RVRCoreLoopFunctions {
+class BigForagingTwoSpotsLoopFunction: public RVRCoreLoopFunctions {
   public:
-    ForagingTwoSpotsLoopFunction();
-    ForagingTwoSpotsLoopFunction(const ForagingTwoSpotsLoopFunction& orig);
-    virtual ~ForagingTwoSpotsLoopFunction();
+    BigForagingTwoSpotsLoopFunction();
+    BigForagingTwoSpotsLoopFunction(const BigForagingTwoSpotsLoopFunction& orig);
+    virtual ~BigForagingTwoSpotsLoopFunction();
     
     virtual void Destroy();
     virtual void Init(TConfigurationNode& t_tree);
@@ -50,6 +50,15 @@ class ForagingTwoSpotsLoopFunction: public RVRCoreLoopFunctions {
     Real m_fObjectiveFunction;
 
     std::map<std::string, UInt32> m_mapFoodData;
+     /**
+      * The path of the output file.
+      */
+      std::string m_strOutFile;
+
+     /**
+      * The stream associated to the output file.
+      */
+      std::ofstream m_cOutFile;
 
 };
 

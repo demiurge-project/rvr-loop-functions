@@ -1,56 +1,69 @@
 /**
- * @file <loop-functions/ForagingTwoSpotsLoopFunc.cpp>
+ * @file <BigForagingTwoSpotsLoopFunc.cpp>
  *
- * @author Antoine Ligot - <aligot@ulb.ac.be>
+ * @author Miquel Kegeleirs - <Miquel.kegeleirs@ulb.be>
  *
  * @license MIT License
  */
 
-#include "ForagingTwoSpotsLoopFunc.h"
+#include "BigForagingTwoSpotsLoopFunc.h"
 
 /****************************************/
 /****************************************/
 
-ForagingTwoSpotsLoopFunction::ForagingTwoSpotsLoopFunction()
+BigForagingTwoSpotsLoopFunction::BigForagingTwoSpotsLoopFunction()
 {
-  m_fRadius = 0.25;
-  m_fNestLimit = -0.6;
-  m_cCoordSpot1 = CVector2(0.75, 0);
-  m_cCoordSpot2 = CVector2(-0.75, 0);
+  m_fRadius = 0.265;
+  m_fNestLimit = -0.63;
+  m_cCoordSpot1 = CVector2(0.8, 0);
+  m_cCoordSpot2 = CVector2(-0.8, 0);
   m_fObjectiveFunction = 0;
 }
 
 /****************************************/
 /****************************************/
 
-ForagingTwoSpotsLoopFunction::ForagingTwoSpotsLoopFunction(const ForagingTwoSpotsLoopFunction &orig)
+BigForagingTwoSpotsLoopFunction::BigForagingTwoSpotsLoopFunction(const BigForagingTwoSpotsLoopFunction &orig)
 {
 }
 
 /****************************************/
 /****************************************/
 
-void ForagingTwoSpotsLoopFunction::Init(TConfigurationNode &t_tree)
+void BigForagingTwoSpotsLoopFunction::Init(TConfigurationNode &t_tree)
 {
   RVRCoreLoopFunctions::Init(t_tree);
+  /* Get output file name from XML tree */
+    GetNodeAttribute(t_tree, "output", m_strOutFile);
+    /* Open the file for text writing */
+    m_cOutFile.open(m_strOutFile.c_str(), std::ofstream::out | std::ofstream::app);
+    if(m_cOutFile.fail()) {
+       THROW_ARGOSEXCEPTION("Error opening file \"" << m_strOutFile << "\": " << ::strerror(errno));
+    }
 }
 
 /****************************************/
 /****************************************/
 
-ForagingTwoSpotsLoopFunction::~ForagingTwoSpotsLoopFunction()
+BigForagingTwoSpotsLoopFunction::~BigForagingTwoSpotsLoopFunction()
 {
 }
 
 /****************************************/
 /****************************************/
 
-void ForagingTwoSpotsLoopFunction::Destroy() {}
+void BigForagingTwoSpotsLoopFunction::Destroy() {
+  /* Close the output file */
+    m_cOutFile.close();
+    if(m_cOutFile.fail()) {
+        THROW_ARGOSEXCEPTION("Error closing file \"" << m_strOutFile << "\": " << ::strerror(errno));
+    }
+}
 
 /****************************************/
 /****************************************/
 
-argos::CColor ForagingTwoSpotsLoopFunction::GetFloorColor(const argos::CVector2 &c_position_on_plane)
+argos::CColor BigForagingTwoSpotsLoopFunction::GetFloorColor(const argos::CVector2 &c_position_on_plane)
 {
   CVector2 vCurrentPoint(c_position_on_plane.GetX(), c_position_on_plane.GetY());
   Real d = (m_cCoordSpot1 - vCurrentPoint).Length();
@@ -71,17 +84,17 @@ argos::CColor ForagingTwoSpotsLoopFunction::GetFloorColor(const argos::CVector2 
   //   return CColor::WHITE;
   if (vCurrentPoint.GetY() < m_fNestLimit)
   {
-    Real fMaxDim = 1.231;
-    Real fLengthWall = 0.66;
+    Real fMaxDim = 1.305;
+    Real fLengthWall = 0.7;
     Real fWidthWall = 0.01;
     Real fPI = 3.14159265;
     CVector2 cCenter(0, m_fNestLimit);
-    CVector2 cTop(1.066 + fWidthWall, m_fNestLimit);
-    CVector2 cBottom(-1.066 - fWidthWall, m_fNestLimit);
-    CVector2 cAngle1(1.066 - ARGOS_COS(60 * fPI / 180.0f) * fLengthWall / 2 + fWidthWall, m_fNestLimit - (ARGOS_SIN(60 * fPI / 180.0f) * fLengthWall / 2) - fWidthWall);
+    CVector2 cTop(1.131 + fWidthWall, m_fNestLimit);
+    CVector2 cBottom(-1.131 - fWidthWall, m_fNestLimit);
+    CVector2 cAngle1(1.131 - ARGOS_COS(60 * fPI / 180.0f) * fLengthWall / 2 + fWidthWall, m_fNestLimit - (ARGOS_SIN(60 * fPI / 180.0f) * fLengthWall / 2) - fWidthWall);
     CVector2 cAngle2(fLengthWall / 2 + fWidthWall, -fMaxDim);
     CVector2 cAngle3(-(fLengthWall / 2 + fWidthWall), -fMaxDim);
-    CVector2 cAngle4(-1.066 + ARGOS_COS(60 * fPI / 180.0f) * fLengthWall / 2 - fWidthWall, m_fNestLimit - (ARGOS_SIN(60 * fPI / 180.0f) * fLengthWall / 2) - fWidthWall);
+    CVector2 cAngle4(-1.131 + ARGOS_COS(60 * fPI / 180.0f) * fLengthWall / 2 - fWidthWall, m_fNestLimit - (ARGOS_SIN(60 * fPI / 180.0f) * fLengthWall / 2) - fWidthWall);
     if ((IsWithinTriangle(vCurrentPoint, cCenter, cTop, cAngle1)) ||
         (IsWithinTriangle(vCurrentPoint, cCenter, cAngle2, cAngle3)) ||
         (IsWithinTriangle(vCurrentPoint, cCenter, cAngle1, cAngle2)) ||
@@ -104,7 +117,7 @@ argos::CColor ForagingTwoSpotsLoopFunction::GetFloorColor(const argos::CVector2 
 /****************************************/
 /****************************************/
 
-Real ForagingTwoSpotsLoopFunction::AreaTriangle(CVector2 &c_point_a, CVector2 &c_point_b, CVector2 &c_point_c)
+Real BigForagingTwoSpotsLoopFunction::AreaTriangle(CVector2 &c_point_a, CVector2 &c_point_b, CVector2 &c_point_c)
 {
   Real fArea = Abs(c_point_a.GetX() * (c_point_b.GetY() - c_point_c.GetY()) + c_point_b.GetX() * (c_point_c.GetY() - c_point_a.GetY()) + c_point_c.GetX() * (c_point_a.GetY() - c_point_b.GetY())) / 2;
   return fArea;
@@ -113,7 +126,7 @@ Real ForagingTwoSpotsLoopFunction::AreaTriangle(CVector2 &c_point_a, CVector2 &c
 /****************************************/
 /****************************************/
 
-bool ForagingTwoSpotsLoopFunction::IsWithinTriangle(CVector2 &c_point_q, CVector2 &c_point_a, CVector2 &c_point_b, CVector2 &c_point_c)
+bool BigForagingTwoSpotsLoopFunction::IsWithinTriangle(CVector2 &c_point_q, CVector2 &c_point_a, CVector2 &c_point_b, CVector2 &c_point_c)
 {
   Real fAreaTriangle = AreaTriangle(c_point_a, c_point_b, c_point_c);
   Real fAreaABQ = AreaTriangle(c_point_a, c_point_b, c_point_q);
@@ -133,33 +146,51 @@ bool ForagingTwoSpotsLoopFunction::IsWithinTriangle(CVector2 &c_point_q, CVector
 /****************************************/
 /****************************************/
 
-void ForagingTwoSpotsLoopFunction::Reset()
+void BigForagingTwoSpotsLoopFunction::Reset()
 {
   RVRCoreLoopFunctions::Reset();
   std::ios::sync_with_stdio(false);
   m_mapFoodData.clear();
   m_fObjectiveFunction = 0;
+  /* Close the output file */
+    m_cOutFile.close();
+
+    if(m_cOutFile.fail()) {
+        THROW_ARGOSEXCEPTION("Error closing file \"" << m_strOutFile << "\": " << ::strerror(errno));
+    }
+    /* Open the file for text writing */
+    m_cOutFile.open(m_strOutFile.c_str(), std::ofstream::out | std::ofstream::app);
+    if(m_cOutFile.fail()) {
+        THROW_ARGOSEXCEPTION("Error opening file \"" << m_strOutFile << "\": " << ::strerror(errno));
+    }
 }
 
 /****************************************/
 /****************************************/
 
-void ForagingTwoSpotsLoopFunction::PostStep()
+void BigForagingTwoSpotsLoopFunction::PostStep()
 {
   UInt32 score_temp = m_fObjectiveFunction;
 
-  CSpace::TMapPerType &tEpuckMap = GetSpace().GetEntitiesByType("rvr");
-  CVector2 cEpuckPosition(0, 0);
-  for (CSpace::TMapPerType::iterator it = tEpuckMap.begin(); it != tEpuckMap.end(); ++it)
+  CSpace::TMapPerType &tRVRMap = GetSpace().GetEntitiesByType("rvr");
+  CVector2 cRVRPosition(0, 0);
+  for (CSpace::TMapPerType::iterator it = tRVRMap.begin(); it != tRVRMap.end(); ++it)
   {
-    CRVREntity *pcEpuck = any_cast<CRVREntity *>(it->second);
+    CRVREntity *pcRVR = any_cast<CRVREntity *>(it->second);
 
-    std::string strRobotId = pcEpuck->GetId();
-    cEpuckPosition.Set(pcEpuck->GetEmbodiedEntity().GetOriginAnchor().Position.GetX(),
-                       pcEpuck->GetEmbodiedEntity().GetOriginAnchor().Position.GetY());
+    std::string strRobotId = pcRVR->GetId();
+    if(m_bRealRobot)
+    {
+      cRVRPosition = GetRealPosition(*pcRVR);
+    }
+    else
+    {
+      cRVRPosition.Set(pcRVR->GetEmbodiedEntity().GetOriginAnchor().Position.GetX(),
+                       pcRVR->GetEmbodiedEntity().GetOriginAnchor().Position.GetY());
+    }
 
-    Real fDistanceSpot1 = (m_cCoordSpot1 - cEpuckPosition).Length();
-    Real fDistanceSpot2 = (m_cCoordSpot2 - cEpuckPosition).Length();
+    Real fDistanceSpot1 = (m_cCoordSpot1 - cRVRPosition).Length();
+    Real fDistanceSpot2 = (m_cCoordSpot2 - cRVRPosition).Length();
     if (fDistanceSpot1 <= m_fRadius)
     {
       m_mapFoodData[strRobotId] = 1;
@@ -168,7 +199,7 @@ void ForagingTwoSpotsLoopFunction::PostStep()
     {
       m_mapFoodData[strRobotId] = 1;
     }
-    else if (cEpuckPosition.GetY() <= m_fNestLimit)
+    else if (cRVRPosition.GetY() <= m_fNestLimit)
     {
       std::map<std::string, UInt32>::iterator itFood = m_mapFoodData.find(strRobotId);
       if (itFood != m_mapFoodData.end())
@@ -188,15 +219,20 @@ void ForagingTwoSpotsLoopFunction::PostStep()
 /****************************************/
 /****************************************/
 
-Real ForagingTwoSpotsLoopFunction::GetObjectiveFunction()
+Real BigForagingTwoSpotsLoopFunction::GetObjectiveFunction()
 {
-  return m_fObjectiveFunction;
+  if (m_bMinimizeScore) {
+      return -m_fObjectiveFunction;
+  }
+  else {
+      return m_fObjectiveFunction;
+  }
 }
 
 /****************************************/
 /****************************************/
 
-CVector3 ForagingTwoSpotsLoopFunction::GetRandomPosition()
+CVector3 BigForagingTwoSpotsLoopFunction::GetRandomPosition()
 {
   Real temp;
   Real a = m_pcRng->Uniform(CRange<Real>(0.0f, 1.0f));
@@ -217,9 +253,9 @@ CVector3 ForagingTwoSpotsLoopFunction::GetRandomPosition()
 /****************************************/
 /****************************************/
 
-void ForagingTwoSpotsLoopFunction::PostExperiment()
+void BigForagingTwoSpotsLoopFunction::PostExperiment()
 {
-    LOG << m_fObjectiveFunction << std::endl;
+    m_cOutFile << m_fObjectiveFunction << std::endl;
 }
 
-REGISTER_LOOP_FUNCTIONS(ForagingTwoSpotsLoopFunction, "foraging_loop_functions");
+REGISTER_LOOP_FUNCTIONS(BigForagingTwoSpotsLoopFunction, "big_foraging_loop_functions");

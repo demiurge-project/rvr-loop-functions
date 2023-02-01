@@ -33,7 +33,7 @@ void GridExplorationLoopFunction::Destroy() {}
 
 void GridExplorationLoopFunction::Reset()
 {
-    CoreLoopFunctions::Reset();
+    RVRCoreLoopFunctions::Reset();
 
     m_grid.assign(m_gridSize, std::vector<int>(m_gridSize, 0));
     m_fObjectiveFunction = 0;
@@ -44,7 +44,7 @@ void GridExplorationLoopFunction::Reset()
 
 void GridExplorationLoopFunction::Init(TConfigurationNode &t_tree)
 {
-    CoreLoopFunctions::Init(t_tree);
+    RVRCoreLoopFunctions::Init(t_tree);
 }
 
 argos::CColor GridExplorationLoopFunction::GetFloorColor(const argos::CVector2 &c_position_on_plane)

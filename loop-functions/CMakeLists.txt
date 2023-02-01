@@ -5,9 +5,10 @@ link_directories(
 	${CMAKE_BINARY_DIR}/src
     )
 
-add_subdirectory(vanilla)
-add_subdirectory(rvr-pow)
-add_subdirectory(chocolate)
+add_subdirectory(big-arena)
+#add_subdirectory(vanilla)
+#add_subdirectory(rvr-pow)
+#add_subdirectory(chocolate)
 #add_subdirectory(gianduja)
 #add_subdirectory(complexity)
 #add_subdirectory(extra)

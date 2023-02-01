@@ -8,8 +8,8 @@
  * @license MIT License
  */
 
-#ifndef AUTOMODE_LOOP_FUNCTIONS
-#define AUTOMODE_LOOP_FUNCTIONS
+#ifndef AUTOMODE_RVR_LOOP_FUNCTIONS
+#define AUTOMODE_RVR_LOOP_FUNCTIONS
 
 #include <argos3/core/simulator/space/space.h>
 #include <argos3/core/simulator/loop_functions.h>
@@ -17,10 +17,10 @@
 
 using namespace argos;
 
-class CoreLoopFunctions : public CLoopFunctions
+class RVRCoreLoopFunctions : public CLoopFunctions
 {
 protected:
-  ~CoreLoopFunctions();
+  ~RVRCoreLoopFunctions();
 
   /*
    * Reset function. First remove the robots, then re-position them.
@@ -37,6 +37,11 @@ protected:
    * The position is given by the method GetRandomPosition().
    */
   void MoveRobots();
+  
+  /*
+   * Method used to get real position of the robot taking into account the offset of the tag
+   */
+  CVector2 GetRealPosition(CRVREntity &pcRVR);
 
   /*
    * The number of robots to be placed for the experiment.
@@ -47,6 +52,24 @@ protected:
    * The radius of the circle in which the robots will be distributed.
    */
   Real m_fDistributionRadius;
+
+  /*
+   * The offset of the tag with respect to the center of the robot
+   */
+  Real m_fTagOffset;
+
+  /*
+   * Flag that tells whether we are using the real robot or not.
+   */
+  bool m_bRealRobot;
+  /*
+   * Determines if robots initial positions are random or not.
+   */
+  bool m_bRandomPositions;
+  /*
+   * Determines if score needs to be minimized.
+   */
+  bool m_bMinimizeScore;
 
   CRandom::CRNG *m_pcRng;
 
