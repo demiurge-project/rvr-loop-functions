@@ -27,12 +27,31 @@ ChocolateBigAACLoopFunction::ChocolateBigAACLoopFunction(const ChocolateBigAACLo
 /****************************************/
 /****************************************/
 
+void ChocolateBigAACLoopFunction::Init(TConfigurationNode& t_tree) {
+    RVRCoreLoopFunctions::Init(t_tree);
+    /* Get output file name from XML tree */
+    GetNodeAttribute(t_tree, "output", m_strOutFile);
+    /* Open the file for text writing */
+    m_cOutFile.open(m_strOutFile.c_str(), std::ofstream::out | std::ofstream::app);
+    if(m_cOutFile.fail()) {
+       THROW_ARGOSEXCEPTION("Error opening file \"" << m_strOutFile << "\": " << ::strerror(errno));
+    }
+}
+/****************************************/
+/****************************************/
+
 ChocolateBigAACLoopFunction::~ChocolateBigAACLoopFunction() {}
 
 /****************************************/
 /****************************************/
 
-void ChocolateBigAACLoopFunction::Destroy() {}
+void ChocolateBigAACLoopFunction::Destroy() {
+  /* Close the output file */
+    m_cOutFile.close();
+    if(m_cOutFile.fail()) {
+        THROW_ARGOSEXCEPTION("Error closing file \"" << m_strOutFile << "\": " << ::strerror(errno));
+    }
+}
 
 /****************************************/
 /****************************************/
@@ -41,6 +60,17 @@ void ChocolateBigAACLoopFunction::Reset()
 {
   m_fObjectiveFunction = 0;
   RVRCoreLoopFunctions::Reset();
+  /* Close the output file */
+    m_cOutFile.close();
+
+    if(m_cOutFile.fail()) {
+        THROW_ARGOSEXCEPTION("Error closing file \"" << m_strOutFile << "\": " << ::strerror(errno));
+    }
+    /* Open the file for text writing */
+    m_cOutFile.open(m_strOutFile.c_str(), std::ofstream::out | std::ofstream::app);
+    if(m_cOutFile.fail()) {
+        THROW_ARGOSEXCEPTION("Error opening file \"" << m_strOutFile << "\": " << ::strerror(errno));
+    }
 }
 
 /****************************************/
@@ -69,15 +99,21 @@ argos::CColor ChocolateBigAACLoopFunction::GetFloorColor(const argos::CVector2 &
 
 void ChocolateBigAACLoopFunction::PostStep()
 {
-  CSpace::TMapPerType &tEpuckMap = GetSpace().GetEntitiesByType("rvr");
-  CVector2 cEpuckPosition(0, 0);
-  for (CSpace::TMapPerType::iterator it = tEpuckMap.begin(); it != tEpuckMap.end(); ++it)
+  CSpace::TMapPerType &tRVRMap = GetSpace().GetEntitiesByType("rvr");
+  CVector2 cRVRPosition(0, 0);
+  for (CSpace::TMapPerType::iterator it = tRVRMap.begin(); it != tRVRMap.end(); ++it)
   {
-    CRVREntity *pcEpuck = any_cast<CRVREntity *>(it->second);
-    cEpuckPosition.Set(pcEpuck->GetEmbodiedEntity().GetOriginAnchor().Position.GetX(),
-                       pcEpuck->GetEmbodiedEntity().GetOriginAnchor().Position.GetY());
-
-    Real fDistanceSpot = (m_cCoordBlackSpot - cEpuckPosition).Length();
+    CRVREntity *pcRVR = any_cast<CRVREntity *>(it->second);
+    if(m_bRealRobot)
+    {
+      cRVRPosition = GetRealPosition(*pcRVR);
+    }
+    else
+    {
+      cRVRPosition.Set(pcRVR->GetEmbodiedEntity().GetOriginAnchor().Position.GetX(),
+                       pcRVR->GetEmbodiedEntity().GetOriginAnchor().Position.GetY());
+    }
+    Real fDistanceSpot = (m_cCoordBlackSpot - cRVRPosition).Length();
     if (fDistanceSpot <= m_fRadius)
     {
       m_fObjectiveFunction += 1;
@@ -91,7 +127,12 @@ void ChocolateBigAACLoopFunction::PostStep()
 
 Real ChocolateBigAACLoopFunction::GetObjectiveFunction()
 {
-  return m_fObjectiveFunction;
+  if (m_bMinimizeScore) {
+      return -m_fObjectiveFunction;
+  }
+  else {
+      return m_fObjectiveFunction;
+  }
 }
 
 /****************************************/
@@ -120,10 +161,7 @@ CVector3 ChocolateBigAACLoopFunction::GetRandomPosition()
 
 void ChocolateBigAACLoopFunction::PostExperiment()
 {
-    LOG << m_fObjectiveFunction << std::endl;
-    if (m_bMinimizeScore) {
-        m_fObjectiveFunction = -m_fObjectiveFunction;
-    }
+    m_cOutFile << m_fObjectiveFunction << std::endl;
 }
 
 REGISTER_LOOP_FUNCTIONS(ChocolateBigAACLoopFunction, "chocolate_big_aac_loop_functions");

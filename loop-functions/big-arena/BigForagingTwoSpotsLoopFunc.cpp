@@ -33,6 +33,13 @@ BigForagingTwoSpotsLoopFunction::BigForagingTwoSpotsLoopFunction(const BigForagi
 void BigForagingTwoSpotsLoopFunction::Init(TConfigurationNode &t_tree)
 {
   RVRCoreLoopFunctions::Init(t_tree);
+  /* Get output file name from XML tree */
+    GetNodeAttribute(t_tree, "output", m_strOutFile);
+    /* Open the file for text writing */
+    m_cOutFile.open(m_strOutFile.c_str(), std::ofstream::out | std::ofstream::app);
+    if(m_cOutFile.fail()) {
+       THROW_ARGOSEXCEPTION("Error opening file \"" << m_strOutFile << "\": " << ::strerror(errno));
+    }
 }
 
 /****************************************/
@@ -45,7 +52,13 @@ BigForagingTwoSpotsLoopFunction::~BigForagingTwoSpotsLoopFunction()
 /****************************************/
 /****************************************/
 
-void BigForagingTwoSpotsLoopFunction::Destroy() {}
+void BigForagingTwoSpotsLoopFunction::Destroy() {
+  /* Close the output file */
+    m_cOutFile.close();
+    if(m_cOutFile.fail()) {
+        THROW_ARGOSEXCEPTION("Error closing file \"" << m_strOutFile << "\": " << ::strerror(errno));
+    }
+}
 
 /****************************************/
 /****************************************/
@@ -139,6 +152,17 @@ void BigForagingTwoSpotsLoopFunction::Reset()
   std::ios::sync_with_stdio(false);
   m_mapFoodData.clear();
   m_fObjectiveFunction = 0;
+  /* Close the output file */
+    m_cOutFile.close();
+
+    if(m_cOutFile.fail()) {
+        THROW_ARGOSEXCEPTION("Error closing file \"" << m_strOutFile << "\": " << ::strerror(errno));
+    }
+    /* Open the file for text writing */
+    m_cOutFile.open(m_strOutFile.c_str(), std::ofstream::out | std::ofstream::app);
+    if(m_cOutFile.fail()) {
+        THROW_ARGOSEXCEPTION("Error opening file \"" << m_strOutFile << "\": " << ::strerror(errno));
+    }
 }
 
 /****************************************/
@@ -148,18 +172,25 @@ void BigForagingTwoSpotsLoopFunction::PostStep()
 {
   UInt32 score_temp = m_fObjectiveFunction;
 
-  CSpace::TMapPerType &tEpuckMap = GetSpace().GetEntitiesByType("rvr");
-  CVector2 cEpuckPosition(0, 0);
-  for (CSpace::TMapPerType::iterator it = tEpuckMap.begin(); it != tEpuckMap.end(); ++it)
+  CSpace::TMapPerType &tRVRMap = GetSpace().GetEntitiesByType("rvr");
+  CVector2 cRVRPosition(0, 0);
+  for (CSpace::TMapPerType::iterator it = tRVRMap.begin(); it != tRVRMap.end(); ++it)
   {
-    CRVREntity *pcEpuck = any_cast<CRVREntity *>(it->second);
+    CRVREntity *pcRVR = any_cast<CRVREntity *>(it->second);
 
-    std::string strRobotId = pcEpuck->GetId();
-    cEpuckPosition.Set(pcEpuck->GetEmbodiedEntity().GetOriginAnchor().Position.GetX(),
-                       pcEpuck->GetEmbodiedEntity().GetOriginAnchor().Position.GetY());
+    std::string strRobotId = pcRVR->GetId();
+    if(m_bRealRobot)
+    {
+      cRVRPosition = GetRealPosition(*pcRVR);
+    }
+    else
+    {
+      cRVRPosition.Set(pcRVR->GetEmbodiedEntity().GetOriginAnchor().Position.GetX(),
+                       pcRVR->GetEmbodiedEntity().GetOriginAnchor().Position.GetY());
+    }
 
-    Real fDistanceSpot1 = (m_cCoordSpot1 - cEpuckPosition).Length();
-    Real fDistanceSpot2 = (m_cCoordSpot2 - cEpuckPosition).Length();
+    Real fDistanceSpot1 = (m_cCoordSpot1 - cRVRPosition).Length();
+    Real fDistanceSpot2 = (m_cCoordSpot2 - cRVRPosition).Length();
     if (fDistanceSpot1 <= m_fRadius)
     {
       m_mapFoodData[strRobotId] = 1;
@@ -168,7 +199,7 @@ void BigForagingTwoSpotsLoopFunction::PostStep()
     {
       m_mapFoodData[strRobotId] = 1;
     }
-    else if (cEpuckPosition.GetY() <= m_fNestLimit)
+    else if (cRVRPosition.GetY() <= m_fNestLimit)
     {
       std::map<std::string, UInt32>::iterator itFood = m_mapFoodData.find(strRobotId);
       if (itFood != m_mapFoodData.end())
@@ -190,7 +221,12 @@ void BigForagingTwoSpotsLoopFunction::PostStep()
 
 Real BigForagingTwoSpotsLoopFunction::GetObjectiveFunction()
 {
-  return m_fObjectiveFunction;
+  if (m_bMinimizeScore) {
+      return -m_fObjectiveFunction;
+  }
+  else {
+      return m_fObjectiveFunction;
+  }
 }
 
 /****************************************/
@@ -219,10 +255,7 @@ CVector3 BigForagingTwoSpotsLoopFunction::GetRandomPosition()
 
 void BigForagingTwoSpotsLoopFunction::PostExperiment()
 {
-    LOG << m_fObjectiveFunction << std::endl;
-    if (m_bMinimizeScore) {
-        m_fObjectiveFunction = -m_fObjectiveFunction;
-    }
+    m_cOutFile << m_fObjectiveFunction << std::endl;
 }
 
 REGISTER_LOOP_FUNCTIONS(BigForagingTwoSpotsLoopFunction, "big_foraging_loop_functions");

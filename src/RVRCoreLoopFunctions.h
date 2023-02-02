@@ -37,6 +37,11 @@ protected:
    * The position is given by the method GetRandomPosition().
    */
   void MoveRobots();
+  
+  /*
+   * Method used to get real position of the robot taking into account the offset of the tag
+   */
+  CVector2 GetRealPosition(CRVREntity &pcRVR);
 
   /*
    * The number of robots to be placed for the experiment.
@@ -49,10 +54,18 @@ protected:
   Real m_fDistributionRadius;
 
   /*
+   * The offset of the tag with respect to the center of the robot
+   */
+  Real m_fTagOffset;
+
+  /*
+   * Flag that tells whether we are using the real robot or not.
+   */
+  bool m_bRealRobot;
+  /*
    * Determines if robots initial positions are random or not.
    */
   bool m_bRandomPositions;
-
   /*
    * Determines if score needs to be minimized.
    */

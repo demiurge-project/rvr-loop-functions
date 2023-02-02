@@ -16,11 +16,11 @@
 #include <argos3/core/simulator/space/space.h>
 #include <argos3/plugins/robots/rvr/simulator/rvr_entity.h>
 
-#include "../../src/CoreLoopFunctions.h"
+#include "../../src/RVRCoreLoopFunctions.h"
 
 using namespace argos;
 
-class ForagingTwoSpotsLoopFunction: public CoreLoopFunctions {
+class ForagingTwoSpotsLoopFunction: public RVRCoreLoopFunctions {
   public:
     ForagingTwoSpotsLoopFunction();
     ForagingTwoSpotsLoopFunction(const ForagingTwoSpotsLoopFunction& orig);

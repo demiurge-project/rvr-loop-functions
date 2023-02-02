@@ -32,7 +32,7 @@ ForagingTwoSpotsLoopFunction::ForagingTwoSpotsLoopFunction(const ForagingTwoSpot
 
 void ForagingTwoSpotsLoopFunction::Init(TConfigurationNode &t_tree)
 {
-  CoreLoopFunctions::Init(t_tree);
+  RVRCoreLoopFunctions::Init(t_tree);
 }
 
 /****************************************/
@@ -135,7 +135,7 @@ bool ForagingTwoSpotsLoopFunction::IsWithinTriangle(CVector2 &c_point_q, CVector
 
 void ForagingTwoSpotsLoopFunction::Reset()
 {
-  CoreLoopFunctions::Reset();
+  RVRCoreLoopFunctions::Reset();
   std::ios::sync_with_stdio(false);
   m_mapFoodData.clear();
   m_fObjectiveFunction = 0;

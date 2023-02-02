@@ -22,15 +22,19 @@ void RVRCoreLoopFunctions::Init(argos::TConfigurationNode &t_tree)
     cParametersNode = GetNode(t_tree, "params");
     GetNodeAttributeOrDefault(cParametersNode, "number_robots", m_unNumberRobots, (UInt32)1);
     GetNodeAttributeOrDefault(cParametersNode, "dist_radius", m_fDistributionRadius, (Real)0);
+    GetNodeAttributeOrDefault(cParametersNode, "real_robot", m_bRealRobot, (bool) false);
     GetNodeAttributeOrDefault(cParametersNode, "random_positions", m_bRandomPositions, (bool) true);
-    GetNodeAttributeOrDefault(cParametersNode, "minimize_score", m_bMinimizeScore, (bool) true);
+    GetNodeAttributeOrDefault(cParametersNode, "minimize_score", m_bMimimizeScore, (bool) true);
+    m_fTagOffset = 0.09;
   }
   catch (std::exception e)
   {
     LOGERR << "Problem with Attributes in node params" << std::endl;
   }
 
-  MoveRobots();
+  if (m_bRandomPositions) {
+    MoveRobots();
+  }
 }
 
 /****************************************/
@@ -88,4 +92,18 @@ void RVRCoreLoopFunctions::RemoveRobots()
     id << "rvr" << i;
     RemoveEntity(id.str().c_str());
   }
+}
+
+/****************************************/
+/****************************************/
+
+CVector2 RVRCoreLoopFunctions::GetRealPosition(CRVREntity &pcRVR)
+{
+    CVector2 cRVRPosition(0, 0);
+    CRadians cZAngle, cYAngle, cXAngle;
+    pcRVR.GetEmbodiedEntity().GetOriginAnchor().Orientation.ToEulerAngles(cZAngle, cYAngle, cXAngle); 
+
+    cRVRPosition.Set(pcRVR.GetEmbodiedEntity().GetOriginAnchor().Position.GetX()-m_fTagOffset*Cos(cZAngle),
+                       pcRVR.GetEmbodiedEntity().GetOriginAnchor().Position.GetY()-m_fTagOffset*Sin(cZAngle));
+    return cRVRPosition;
 }

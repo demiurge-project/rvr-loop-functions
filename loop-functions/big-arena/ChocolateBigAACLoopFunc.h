@@ -20,6 +20,7 @@ class ChocolateBigAACLoopFunction : public RVRCoreLoopFunctions {
       ChocolateBigAACLoopFunction(const ChocolateBigAACLoopFunction& orig);
       virtual ~ChocolateBigAACLoopFunction();
 
+      virtual void Init(TConfigurationNode& t_tree);
       virtual void Destroy();
       virtual void Reset();
       virtual void PostStep();
@@ -37,6 +38,15 @@ class ChocolateBigAACLoopFunction : public RVRCoreLoopFunctions {
       CVector2 m_cCoordWhiteSpot;
 
       Real m_fObjectiveFunction;
+     /**
+      * The path of the output file.
+      */
+      std::string m_strOutFile;
+
+     /**
+      * The stream associated to the output file.
+      */
+      std::ofstream m_cOutFile;
 };
 
 #endif

@@ -31,6 +31,15 @@ private:
   Real m_arenaSize;
   UInt32 m_gridSize;
   Real m_fObjectiveFunction;
+     /**
+      * The path of the output file.
+      */
+      std::string m_strOutFile;
+
+     /**
+      * The stream associated to the output file.
+      */
+      std::ofstream m_cOutFile;
 };
 
 #endif

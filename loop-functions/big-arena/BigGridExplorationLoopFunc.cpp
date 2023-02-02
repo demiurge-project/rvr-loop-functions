@@ -26,7 +26,13 @@ BigGridExplorationLoopFunction::~BigGridExplorationLoopFunction() {}
 /****************************************/
 /****************************************/
 
-void BigGridExplorationLoopFunction::Destroy() {}
+void BigGridExplorationLoopFunction::Destroy() {
+    /* Close the output file */
+    m_cOutFile.close();
+    if(m_cOutFile.fail()) {
+        THROW_ARGOSEXCEPTION("Error closing file \"" << m_strOutFile << "\": " << ::strerror(errno));
+    }
+}
 
 /****************************************/
 /****************************************/
@@ -37,6 +43,17 @@ void BigGridExplorationLoopFunction::Reset()
 
     m_grid.assign(m_gridSize, std::vector<int>(m_gridSize, 0));
     m_fObjectiveFunction = 0;
+    /* Close the output file */
+    m_cOutFile.close();
+
+    if(m_cOutFile.fail()) {
+        THROW_ARGOSEXCEPTION("Error closing file \"" << m_strOutFile << "\": " << ::strerror(errno));
+    }
+    /* Open the file for text writing */
+    m_cOutFile.open(m_strOutFile.c_str(), std::ofstream::out | std::ofstream::app);
+    if(m_cOutFile.fail()) {
+        THROW_ARGOSEXCEPTION("Error opening file \"" << m_strOutFile << "\": " << ::strerror(errno));
+    }
 }
 
 /****************************************/
@@ -45,6 +62,13 @@ void BigGridExplorationLoopFunction::Reset()
 void BigGridExplorationLoopFunction::Init(TConfigurationNode &t_tree)
 {
     RVRCoreLoopFunctions::Init(t_tree);
+    /* Get output file name from XML tree */
+    GetNodeAttribute(t_tree, "output", m_strOutFile);
+    /* Open the file for text writing */
+    m_cOutFile.open(m_strOutFile.c_str(), std::ofstream::out | std::ofstream::app);
+    if(m_cOutFile.fail()) {
+       THROW_ARGOSEXCEPTION("Error opening file \"" << m_strOutFile << "\": " << ::strerror(errno));
+    }
 }
 
 argos::CColor BigGridExplorationLoopFunction::GetFloorColor(const argos::CVector2 &c_position_on_plane)
@@ -87,19 +111,25 @@ CVector3 BigGridExplorationLoopFunction::GetRandomPosition()
 
 void BigGridExplorationLoopFunction::PostStep()
 {
-    CSpace::TMapPerType &tEpuckMap = GetSpace().GetEntitiesByType("rvr");
-    CVector2 cEpuckPosition(0, 0);
+    CSpace::TMapPerType &tRVRMap = GetSpace().GetEntitiesByType("rvr");
+    CVector2 cRVRPosition(0, 0);
 
-    for (CSpace::TMapPerType::iterator it = tEpuckMap.begin(); it != tEpuckMap.end(); ++it)
+    for (CSpace::TMapPerType::iterator it = tRVRMap.begin(); it != tRVRMap.end(); ++it)
     {
-        CRVREntity *pcEpuck = any_cast<CRVREntity *>(it->second);
-        cEpuckPosition.Set(pcEpuck->GetEmbodiedEntity().GetOriginAnchor().Position.GetX(),
-                           pcEpuck->GetEmbodiedEntity().GetOriginAnchor().Position.GetY());
-
-        UInt32 X = (UInt32)m_gridSize * (cEpuckPosition.GetX() / m_arenaSize + 0.5);
-        UInt32 Y = (UInt32)m_gridSize * (cEpuckPosition.GetY() / m_arenaSize + 0.5);
-        if (X < m_gridSize && Y < m_gridSize && X >= 0 && Y >= 0)
+        CRVREntity *pcRVR = any_cast<CRVREntity *>(it->second);
+        if(m_bRealRobot)
         {
+          cRVRPosition = GetRealPosition(*pcRVR);
+        }
+        else
+        {
+          cRVRPosition.Set(pcRVR->GetEmbodiedEntity().GetOriginAnchor().Position.GetX(),
+                           pcRVR->GetEmbodiedEntity().GetOriginAnchor().Position.GetY());
+        }
+        UInt32 X = (UInt32)m_gridSize * (cRVRPosition.GetX() / m_arenaSize + 0.5);
+        UInt32 Y = (UInt32)m_gridSize * (cRVRPosition.GetY() / m_arenaSize + 0.5);
+        if (X < m_gridSize && Y < m_gridSize && X >= 0 && Y >= 0)
+	{
             m_grid[X][Y] = 0;
         }
     }
@@ -123,15 +153,18 @@ void BigGridExplorationLoopFunction::PostStep()
 void BigGridExplorationLoopFunction::PostExperiment()
 {
     m_fObjectiveFunction = -m_fObjectiveFunction / m_gridSize / m_gridSize;
-    LOG << "Final value : " << m_fObjectiveFunction << std::endl;
-    if (m_bMinimizeScore) {
-        m_fObjectiveFunction = -m_fObjectiveFunction;
-    }
+    //LOG << "Final value : " << m_fObjectiveFunction << std::endl;
+    m_cOutFile << m_fObjectiveFunction << std::endl;
 }
 
 Real BigGridExplorationLoopFunction::GetObjectiveFunction()
 {
-    return (m_fObjectiveFunction);
+    if (m_bMinimizeScore) {
+      return -m_fObjectiveFunction;
+  }
+  else {
+      return m_fObjectiveFunction;
+  }
 }
 
 REGISTER_LOOP_FUNCTIONS(BigGridExplorationLoopFunction, "big_grid_exploration_loop_functions");
