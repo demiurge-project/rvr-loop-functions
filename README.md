@@ -1,5 +1,5 @@
 # README
-experiments-loop-functions
+rvr-loop-functions
 =====================
 
 This package contains the source for unified handling of loop
@@ -10,7 +10,7 @@ missions from different AutoMoDe related studies.
 All useful information about the AutoMoDe package, including
 installation and utilization instructions, are regrouped in the
 following technical report ([techrep](#bibliography)). Please cite
-this report if you any ARGoS3-AutoMoDe related package.
+this report if you any ARGoS3-AutoMoDe-rvr related package.
 
 ## Package content
 - `loop-functions/` contains all sources for loop functions for
@@ -21,11 +21,11 @@ this report if you any ARGoS3-AutoMoDe related package.
 ## Installation
 ### Dependencies
 - [ARGoS3](https://github.com/ilpincy/argos3) (3.0.0-beta48)
-- [argos3-epuck](https://github.com/demiurge-project/argos3-epuck) (v48)
+- [argos3-rvr](https://github.com/demiurge-project/argos3-rvr)
 
 ### Compiling and installing
-    $ git clone https://github.com/demiurge-project/experiments-loop-functions.git
-    $ cd experiments-loop-functions
+    $ git clone https://github.com/demiurge-project/rvr-loop-functions.git
+    $ cd rvr-loop-functions
     $ mkdir build
     $ cmake ..
     $ make
@@ -51,6 +51,6 @@ automatic design methods (see [references](#bibliography)).
 ## References
 ### Bibliography
 
-- [techrep] Ligot, A., Hasselmann, K., Delhaisse, B., Garattoni, L., Francesca, G., & Birattari, M. (2017). AutoMoDe, NEAT, and EvoStick: implementations for the E-puck robot in ARGoS3. Technical report TR/IRIDIA/2017-002, IRIDIA, Université libre de Bruxelles, Belgium.
+- [techrep] Kegeleirs, M., Todesco, R., Garzon Ramos, D., Legarda Herranz, G., Birattari, M. (2022).Mercator: hardware and software architecture for experiments in swarm SLAM. Technical report TR/IRIDIA/2022-012, IRIDIA, Université libre de Bruxelles, Belgium.
 - [chocolate] Francesca, G., Brambilla, M., Brutschy, A., Garattoni, L., Miletitch, R., Podevijn, G., ... & Mascia, F. (2015). AutoMoDe-Chocolate: automatic design of control software for robot swarms. Swarm Intelligence, 9(2-3), 125-152.
 - [gianduja] Hasselmann K., Robert F., Birattari M. (2018) Automatic Design of Communication-Based Behaviors for Robot Swarms. In: Dorigo M., Birattari M., Blum C., Christensen A., Reina A., Trianni V. (eds) Swarm Intelligence. ANTS 2018. Lecture Notes in Computer Science, vol 11172. Springer, Cham

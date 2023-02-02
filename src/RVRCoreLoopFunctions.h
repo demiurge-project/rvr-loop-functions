@@ -23,6 +23,11 @@ protected:
   ~RVRCoreLoopFunctions();
 
   /*
+   * Destroy function. First remove the robots, then re-position them.
+   */
+  virtual void Destroy(); 
+
+  /*
    * Reset function. First remove the robots, then re-position them.
    */
   virtual void Reset();
@@ -62,8 +67,30 @@ protected:
    * Flag that tells whether we are using the real robot or not.
    */
   bool m_bRealRobot;
+  /*
+   * Determines if robots initial positions are random or not.
+   */
+  bool m_bRandomPositions;
+  /*
+   * Determines if score needs to be minimized.
+   */
+  bool m_bMinimizeScore;
+  /*
+   * Determines if output is stored in a file.
+   */
+  bool m_bOutputInFile;
 
   CRandom::CRNG *m_pcRng;
+
+ /*
+  * The path of the output file.
+  */
+  std::string m_strOutFile;
+
+ /*
+  * The stream associated to the output file.
+  */
+  std::ofstream m_cOutFile;
 
 public:
   /*

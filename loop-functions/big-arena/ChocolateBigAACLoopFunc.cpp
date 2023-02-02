@@ -29,13 +29,6 @@ ChocolateBigAACLoopFunction::ChocolateBigAACLoopFunction(const ChocolateBigAACLo
 
 void ChocolateBigAACLoopFunction::Init(TConfigurationNode& t_tree) {
     RVRCoreLoopFunctions::Init(t_tree);
-    /* Get output file name from XML tree */
-    GetNodeAttribute(t_tree, "output", m_strOutFile);
-    /* Open the file for text writing */
-    m_cOutFile.open(m_strOutFile.c_str(), std::ofstream::out | std::ofstream::app);
-    if(m_cOutFile.fail()) {
-       THROW_ARGOSEXCEPTION("Error opening file \"" << m_strOutFile << "\": " << ::strerror(errno));
-    }
 }
 /****************************************/
 /****************************************/
@@ -45,13 +38,7 @@ ChocolateBigAACLoopFunction::~ChocolateBigAACLoopFunction() {}
 /****************************************/
 /****************************************/
 
-void ChocolateBigAACLoopFunction::Destroy() {
-  /* Close the output file */
-    m_cOutFile.close();
-    if(m_cOutFile.fail()) {
-        THROW_ARGOSEXCEPTION("Error closing file \"" << m_strOutFile << "\": " << ::strerror(errno));
-    }
-}
+void ChocolateBigAACLoopFunction::Destroy() {}
 
 /****************************************/
 /****************************************/
@@ -60,17 +47,6 @@ void ChocolateBigAACLoopFunction::Reset()
 {
   m_fObjectiveFunction = 0;
   RVRCoreLoopFunctions::Reset();
-  /* Close the output file */
-    m_cOutFile.close();
-
-    if(m_cOutFile.fail()) {
-        THROW_ARGOSEXCEPTION("Error closing file \"" << m_strOutFile << "\": " << ::strerror(errno));
-    }
-    /* Open the file for text writing */
-    m_cOutFile.open(m_strOutFile.c_str(), std::ofstream::out | std::ofstream::app);
-    if(m_cOutFile.fail()) {
-        THROW_ARGOSEXCEPTION("Error opening file \"" << m_strOutFile << "\": " << ::strerror(errno));
-    }
 }
 
 /****************************************/
@@ -127,7 +103,12 @@ void ChocolateBigAACLoopFunction::PostStep()
 
 Real ChocolateBigAACLoopFunction::GetObjectiveFunction()
 {
-  return m_fObjectiveFunction;
+  if (m_bMinimizeScore) {
+      return -m_fObjectiveFunction;
+  }
+  else {
+      return m_fObjectiveFunction;
+  }
 }
 
 /****************************************/
@@ -156,7 +137,14 @@ CVector3 ChocolateBigAACLoopFunction::GetRandomPosition()
 
 void ChocolateBigAACLoopFunction::PostExperiment()
 {
+  if (m_bOutputInFile)
+  {
     m_cOutFile << m_fObjectiveFunction << std::endl;
+  }
+  else
+  {
+    LOG << m_fObjectiveFunction << std::endl;
+  }
 }
 
 REGISTER_LOOP_FUNCTIONS(ChocolateBigAACLoopFunction, "chocolate_big_aac_loop_functions");

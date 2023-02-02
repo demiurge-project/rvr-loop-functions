@@ -50,15 +50,6 @@ class BigForagingTwoSpotsLoopFunction: public RVRCoreLoopFunctions {
     Real m_fObjectiveFunction;
 
     std::map<std::string, UInt32> m_mapFoodData;
-     /**
-      * The path of the output file.
-      */
-      std::string m_strOutFile;
-
-     /**
-      * The stream associated to the output file.
-      */
-      std::ofstream m_cOutFile;
 };
 
 #endif

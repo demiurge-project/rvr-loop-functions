@@ -38,15 +38,6 @@ class ChocolateBigAACLoopFunction : public RVRCoreLoopFunctions {
       CVector2 m_cCoordWhiteSpot;
 
       Real m_fObjectiveFunction;
-     /**
-      * The path of the output file.
-      */
-      std::string m_strOutFile;
-
-     /**
-      * The stream associated to the output file.
-      */
-      std::ofstream m_cOutFile;
 };
 
 #endif
