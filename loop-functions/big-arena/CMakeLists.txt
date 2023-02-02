@@ -14,3 +14,5 @@ target_link_libraries(big_grid_exploration_loopfunc argos3plugin_${ARGOS_BUILD_F
 add_library(chocolate_big_aac_loopfunc SHARED ChocolateBigAACLoopFunc.h ChocolateBigAACLoopFunc.cpp ${LOOP_HEADERS} ${LOOP_SOURCES})
 target_link_libraries(chocolate_big_aac_loopfunc argos3plugin_${ARGOS_BUILD_FOR}_rvr)
 
+add_library(test_loopfunc SHARED TestLoopFunc.h TestLoopFunc.cpp ${LOOP_HEADERS} ${LOOP_SOURCES})
+target_link_libraries(test_loopfunc argos3plugin_${ARGOS_BUILD_FOR}_rvr)

@@ -152,19 +152,14 @@ void BigGridExplorationLoopFunction::PostStep()
 
 void BigGridExplorationLoopFunction::PostExperiment()
 {
-    m_fObjectiveFunction = -m_fObjectiveFunction / m_gridSize / m_gridSize;
+    m_fObjectiveFunction = m_fObjectiveFunction / m_gridSize / m_gridSize;
     //LOG << "Final value : " << m_fObjectiveFunction << std::endl;
     m_cOutFile << m_fObjectiveFunction << std::endl;
 }
 
 Real BigGridExplorationLoopFunction::GetObjectiveFunction()
 {
-    if (m_bMinimizeScore) {
-      return -m_fObjectiveFunction;
-  }
-  else {
-      return m_fObjectiveFunction;
-  }
+    return (m_fObjectiveFunction);
 }
 
 REGISTER_LOOP_FUNCTIONS(BigGridExplorationLoopFunction, "big_grid_exploration_loop_functions");

@@ -6,7 +6,7 @@ link_directories(
     )
 
 add_subdirectory(big-arena)
-#add_subdirectory(vanilla)
+add_subdirectory(vanilla)
 #add_subdirectory(rvr-pow)
 #add_subdirectory(chocolate)
 #add_subdirectory(gianduja)

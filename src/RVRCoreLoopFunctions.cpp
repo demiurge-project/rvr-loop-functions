@@ -23,8 +23,6 @@ void RVRCoreLoopFunctions::Init(argos::TConfigurationNode &t_tree)
     GetNodeAttributeOrDefault(cParametersNode, "number_robots", m_unNumberRobots, (UInt32)1);
     GetNodeAttributeOrDefault(cParametersNode, "dist_radius", m_fDistributionRadius, (Real)0);
     GetNodeAttributeOrDefault(cParametersNode, "real_robot", m_bRealRobot, false);
-    GetNodeAttributeOrDefault(cParametersNode, "random_positions", m_bRandomPositions, (bool) true);
-    GetNodeAttributeOrDefault(cParametersNode, "minimize_score", m_bMimimizeScore, (bool) true);
     m_fTagOffset = 0.09;
   }
   catch (std::exception e)
@@ -32,9 +30,7 @@ void RVRCoreLoopFunctions::Init(argos::TConfigurationNode &t_tree)
     LOGERR << "Problem with Attributes in node params" << std::endl;
   }
 
-  if (m_bRandomPositions) {
-    MoveRobots();
-  }
+  MoveRobots();
 }
 
 /****************************************/

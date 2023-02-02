@@ -62,14 +62,6 @@ protected:
    * Flag that tells whether we are using the real robot or not.
    */
   bool m_bRealRobot;
-  /*
-   * Determines if robots initial positions are random or not.
-   */
-  bool m_bRandomPositions;
-  /*
-   * Determines if score needs to be minimized.
-   */
-  bool m_bMinimizeScore;
 
   CRandom::CRNG *m_pcRng;
 

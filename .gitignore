@@ -35,5 +35,7 @@
 build/*
 loop-functions/AutoMoDe-Modules/versions/*
 loop-functions/ModularityExperiment/versions/*
+loop-functions/big-arena/TestLoopFunc.cpp
+loop-functions/big-arena/TestLoopFunc.h
 .vscode/*
 .idea/

@@ -127,12 +127,7 @@ void ChocolateBigAACLoopFunction::PostStep()
 
 Real ChocolateBigAACLoopFunction::GetObjectiveFunction()
 {
-  if (m_bMinimizeScore) {
-      return -m_fObjectiveFunction;
-  }
-  else {
-      return m_fObjectiveFunction;
-  }
+  return m_fObjectiveFunction;
 }
 
 /****************************************/
