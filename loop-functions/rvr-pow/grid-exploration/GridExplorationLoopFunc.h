@@ -1,13 +1,13 @@
 #ifndef GRID_EXPLORATION_LOOP_FUNC
 #define GRID_EXPLORATION_LOOP_FUNC
 
-#include "../../../src/CoreLoopFunctions.h"
+#include "../../../src/RVRCoreLoopFunctions.h"
 #include <argos3/core/simulator/space/space.h>
 #include <argos3/plugins/robots/rvr/simulator/rvr_entity.h>
 
 using namespace argos;
 
-class GridExplorationLoopFunction : public CoreLoopFunctions
+class GridExplorationLoopFunction : public RVRCoreLoopFunctions
 {
 public:
   GridExplorationLoopFunction();
