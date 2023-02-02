@@ -129,7 +129,7 @@ void BigGridExplorationLoopFunction::PostStep()
         UInt32 X = (UInt32)m_gridSize * (cRVRPosition.GetX() / m_arenaSize + 0.5);
         UInt32 Y = (UInt32)m_gridSize * (cRVRPosition.GetY() / m_arenaSize + 0.5);
         if (X < m_gridSize && Y < m_gridSize && X >= 0 && Y >= 0)
-        {
+	{
             m_grid[X][Y] = 0;
         }
     }

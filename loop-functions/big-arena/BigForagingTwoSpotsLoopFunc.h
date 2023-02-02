@@ -59,7 +59,6 @@ class BigForagingTwoSpotsLoopFunction: public RVRCoreLoopFunctions {
       * The stream associated to the output file.
       */
       std::ofstream m_cOutFile;
-
 };
 
 #endif
